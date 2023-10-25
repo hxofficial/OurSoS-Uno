@@ -6,19 +6,23 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import * as langs from "./languages.json";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 type LanguageType = {
   name: string;
   tag: string;
 };
 import { staticType } from ".";
 
-import staticText from "../utils/static-text.json"
-import { StaticTextContext, UserLanguageContext } from "./context/language-context";
+import staticText from "../utils/static-text.json";
+import {
+  StaticTextContext,
+  UserLanguageContext,
+} from "./context/language-context";
+import tw from "twrnc";
 
 export default function SelectLanguage() {
-
-  const [translatedStaticContent, setTranslatedStaticContent] = useState(staticText);
+  const [translatedStaticContent, setTranslatedStaticContent] =
+    useState(staticText);
   const [userLang, setUserLang] = useContext(UserLanguageContext);
   const router = useRouter();
   const [languages, setLanguages] = useState<LanguageType[]>([
@@ -31,7 +35,9 @@ export default function SelectLanguage() {
 
   useEffect(() => {
     axios
-      .get("https://oursos-backend-production.up.railway.app/languagelistenglish")
+      .get(
+        "https://oursos-backend-production.up.railway.app/languagelistenglish"
+      )
       .then((res) => {
         setLanguages(res.data);
       });
@@ -39,10 +45,10 @@ export default function SelectLanguage() {
 
   const setUserLanguage = () => {
     const updateUserRequest = {
-      "username": "cunt",
-      "locations": ["(40.7128,-74.006)"],
-      "languagepreference": languageTag, // Ensure that languageTag is defined and has a valid value
-      "friends": [2, 3],
+      username: "cunt",
+      locations: ["(40.7128,-74.006)"],
+      languagepreference: languageTag, // Ensure that languageTag is defined and has a valid value
+      friends: [2, 3],
     };
     if (languageTag) {
       setUserLang(languageTag);
@@ -53,22 +59,28 @@ export default function SelectLanguage() {
         )
         .then((response) => {
           setUserLang(languageTag);
-          axios.post<{ "translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", { "translateObject": staticText, "lang": userLang })
-            .then(res => {
+          axios
+            .post<{ translateObject: staticType; lang: string }>(
+              "https://oursos-backend-production.up.railway.app/translateobject",
+              { translateObject: staticText, lang: userLang }
+            )
+            .then((res) => {
               setTranslatedStaticContent(res.data.translateObject);
               console.log(res.data.translateObject);
-            }).then(() => {
-              console.log(translatedStaticContent);
             })
-          router.replace("/intro-newsfeed")
-        })
+            .then(() => {
+              console.log(translatedStaticContent);
+            });
+          router.replace("/intro-newsfeed");
+        });
     }
   };
 
-
   return (
     <UserLanguageContext.Provider value={[userLang, setUserLang]}>
-      <StaticTextContext.Provider value={[translatedStaticContent, setTranslatedStaticContent]}>
+      <StaticTextContext.Provider
+        value={[translatedStaticContent, setTranslatedStaticContent]}
+      >
         <View style={styles.container}>
           <IntroLayout>
             <Text style={styles.header}>Select your language</Text>
@@ -97,13 +109,18 @@ export default function SelectLanguage() {
 
             {/* <Link > */}
             <Pressable
-              onPress={() => {
-                setUserLanguage();
-
-              }}
-              style={styles.button}
+              style={[
+                tw`rounded-lg p-4 mt-4`,
+                {
+                  backgroundColor: "#003566",
+                  width: 200,
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              ]}
             >
-              <Text style={styles.text}>Continue</Text>
+              <Text style={{ color: "#FFFFFF" }}>Continue</Text>
             </Pressable>
             {/* </Link> */}
           </IntroLayout>

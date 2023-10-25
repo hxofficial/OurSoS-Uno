@@ -4,76 +4,127 @@ import React, { useState, useEffect, useContext } from "react";
 import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
 import axios from "axios";
-import staticText from "../utils/static-text.json"
+import staticText from "../utils/static-text.json";
 import { UserLanguageContext } from "./context/language-context";
+import tw from "twrnc";
 export type staticType = {
   "intro-friends": {
-    "details": string,
-    "heading": string,
-  },
+    details: string;
+    heading: string;
+  };
   "intro-map": {
-    "details": string,
-    "heading": string,
-  },
+    details: string;
+    heading: string;
+  };
   "intro-newsfeed": {
-    "details": string,
-    "heading": string,
-  },
-  "map": {
-    "heading": string,
-    "search-placeholder": string,
-  },
-  "news": {
-    "heading": string,
-    "search-placeholder": string,
-    "pins-header": string,
-    "friends-header": string,
-    "view-more": string,
-  },
-  "friends": {
-    "search-placeholder": string,
-  },
-  "article": {
-    "details": string,
-  },
+    details: string;
+    heading: string;
+  };
+  map: {
+    heading: string;
+    "search-placeholder": string;
+  };
+  news: {
+    heading: string;
+    "search-placeholder": string;
+    "pins-header": string;
+    "friends-header": string;
+    "view-more": string;
+  };
+  friends: {
+    "search-placeholder": string;
+  };
+  article: {
+    details: string;
+  };
   "button-text": {
-    "continue": string,
-    "back-button": string,
-  }
+    continue: string;
+    "back-button": string;
+  };
 };
 
 export default function App() {
-  const [translatedStaticContent, setTranslatedStaticContent] = useState(staticText);
+  const [translatedStaticContent, setTranslatedStaticContent] =
+    useState(staticText);
   const [userLang, setUserLang] = useState("en");
 
   useEffect(() => {
     // Axios call returns a translated object in type staticType for reference in remaining app
-    axios.get("https://oursos-backend-production.up.railway.app/users/1").then((user) => {
-      setUserLang(user.data.languagepreference);
-    }).then(() => {
-      axios.post<{ "translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", { "translateObject": staticText, "lang": userLang })
-        .then(res => {
-          setTranslatedStaticContent(res.data.translateObject);
-        }).then(() => {
-
-          console.log(translatedStaticContent);
-        })
-    })
-
-  }, [])
+    axios
+      .get("https://oursos-backend-production.up.railway.app/users/1")
+      .then((user) => {
+        setUserLang(user.data.languagepreference);
+      })
+      .then(() => {
+        axios
+          .post<{ translateObject: staticType; lang: string }>(
+            "https://oursos-backend-production.up.railway.app/translateobject",
+            { translateObject: staticText, lang: userLang }
+          )
+          .then((res) => {
+            setTranslatedStaticContent(res.data.translateObject);
+          })
+          .then(() => {
+            console.log(translatedStaticContent);
+          });
+      });
+  }, []);
   return (
     <UserLanguageContext.Provider value={[userLang, setUserLang]}>
-      
       <View style={styles.container}>
         <IntroLayout>
           <Text style={styles.header}>Welcome to OurSoS!</Text>
+
           <Link href="/intro-select-language">
-            {/* <Pressable style={styles.button}> */}
-            <Text style={styles.text}>Select Language</Text>
-            {/* </Pressable> */}
+            <Pressable
+              style={[
+                tw`rounded-lg p-4 mt-4`,
+                {
+                  backgroundColor: "#003566",
+                  width: 200,
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              ]}
+            >
+              <Text style={{ color: "#FFFFFF" }}>Select Language</Text>
+            </Pressable>
           </Link>
-          <Link href="/map"><Text>Go Map</Text></Link>
-          <Link href="/news"><Text>Go News</Text></Link>
+
+          <Link href="/map">
+            <Pressable
+              style={[
+                tw`rounded-lg p-4 mt-4`,
+                {
+                  backgroundColor: "#003566",
+                  width: 200,
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              ]}
+            >
+              <Text style={{ color: "#FFFFFF" }}>Go Map</Text>
+            </Pressable>
+          </Link>
+
+          <Link href="/news">
+            <Pressable
+              style={[
+                tw`rounded-lg p-4 mt-4`,
+                {
+                  backgroundColor: "#003566",
+                  width: 200,
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              ]}
+            >
+              <Text style={{ color: "#FFFFFF" }}>Go News</Text>
+            </Pressable>
+          </Link>
         </IntroLayout>
       </View>
     </UserLanguageContext.Provider>
